@@ -1,0 +1,11 @@
+# ---
+# author: Just Deploy It
+# project: Hister on Railway
+# purpose: Exclude local Railway links and generated Python cache
+# used_by: git
+# status: active
+# verified: 2026-08-27
+# ---
+.railway/
+__pycache__/
+*.pyc

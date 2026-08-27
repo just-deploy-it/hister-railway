@@ -1,0 +1,44 @@
+# ---
+# author: Just Deploy It
+# project: Hister on Railway
+# purpose: Repeat repository and exact-image gates after main or pull-request changes
+# used_by: GitHub Actions
+# status: active
+# verified: 2026-08-27
+# ---
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Run tests and configuration gates
+        run: |
+          python3 -m unittest discover -s tests -p 'test_*.py'
+          python3 scripts/verify.py
+          git diff --check
+
+      - name: Clean-build the exact tested candidate pin
+        run: |
+          image="$(jq -r '"\(.image)@\(.digest)"' upstream.json)"
+          grep -Fqx "ARG HISTER_IMAGE=${image}" Dockerfile
+          docker build --pull --no-cache --build-arg "HISTER_IMAGE=${image}" --tag hister-railway:test .

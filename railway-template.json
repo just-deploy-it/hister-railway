@@ -1,0 +1,58 @@
+{
+  "_meta": {
+    "author": "Just Deploy It",
+    "context": "Hister Railway template IhfcxB",
+    "purpose": "Human-reviewable source of truth for the live Railway composer",
+    "usedBy": [
+      "Railway template factory",
+      "scripts/verify.py"
+    ],
+    "status": "active",
+    "verified": "2026-08-27"
+  },
+  "manifestVersion": 1,
+  "name": "Hister",
+  "upstream": {
+    "version": "v0.18.0",
+    "digest": "sha256:55ca3b00da9d3245cc689a7f4455be5f4a3931c29d3450d6d1f46f8c931cce35"
+  },
+  "services": [
+    {
+      "name": "Hister",
+      "source": {
+        "type": "github",
+        "repository": "https://github.com/just-deploy-it/hister-railway",
+        "branch": "main",
+        "rootDirectory": "/",
+        "dockerfilePath": "Dockerfile"
+      },
+      "publicNetworking": {
+        "enabled": true,
+        "protocol": "HTTP",
+        "port": 4433
+      },
+      "healthcheck": {
+        "path": "/api/config",
+        "timeoutSeconds": 300
+      },
+      "restartPolicy": {
+        "type": "ON_FAILURE",
+        "maxRetries": 10
+      },
+      "variables": {
+        "HISTER__APP__ACCESS_TOKEN": "${{secret(32)}}",
+        "HISTER__APP__PUBLIC": "false",
+        "HISTER__APP__USER_HANDLING": "false",
+        "HISTER__SERVER__ADDRESS": "0.0.0.0:4433",
+        "HISTER__SERVER__BASE_URL": "https://${{RAILWAY_PUBLIC_DOMAIN}}",
+        "HISTER_DATA_DIR": "/hister/data",
+        "PORT": "4433",
+        "RAILWAY_RUN_UID": "0"
+      },
+      "volume": {
+        "name": "hister-data",
+        "mountPath": "/hister/data"
+      }
+    }
+  ]
+}

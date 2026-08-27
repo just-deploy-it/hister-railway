@@ -1,0 +1,10 @@
+# ---
+# author: Just Deploy It
+# project: Hister on Railway
+# purpose: Keep the source image build context limited to the immutable wrapper
+# used_by: Docker and Railway builders
+# status: active
+# verified: 2026-08-27
+# ---
+*
+!Dockerfile

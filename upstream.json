@@ -1,0 +1,25 @@
+{
+  "_meta": {
+    "author": "Just Deploy It",
+    "project": "Hister on Railway",
+    "purpose": "Declare the immutable upstream release shared by every pin-bearing file",
+    "usedBy": [
+      "Dockerfile",
+      "railway-template.json",
+      "scripts/update_hister.py",
+      "scripts/verify.py"
+    ],
+    "status": "active",
+    "verified": "2026-08-27"
+  },
+  "name": "Hister",
+  "repository": "https://github.com/asciimoo/hister",
+  "image": "ghcr.io/asciimoo/hister",
+  "version": "v0.18.0",
+  "digest": "sha256:55ca3b00da9d3245cc689a7f4455be5f4a3931c29d3450d6d1f46f8c931cce35",
+  "pinBearingFiles": [
+    "Dockerfile",
+    "upstream.json",
+    "railway-template.json"
+  ]
+}
