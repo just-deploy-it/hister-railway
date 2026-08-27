@@ -12,19 +12,23 @@
   },
   "manifestVersion": 1,
   "name": "Hister",
+  "template": {
+    "id": "27248383-1851-4556-8604-1b1f6f93f4c9",
+    "code": "IhfcxB",
+    "status": "UNPUBLISHED"
+  },
   "upstream": {
     "version": "v0.18.0",
     "digest": "sha256:55ca3b00da9d3245cc689a7f4455be5f4a3931c29d3450d6d1f46f8c931cce35"
   },
   "services": [
     {
+      "id": "4a3812aa-2eff-4e20-a26f-f1b8a3855d51",
       "name": "Hister",
       "source": {
-        "type": "github",
-        "repository": "https://github.com/just-deploy-it/hister-railway",
-        "branch": "main",
-        "rootDirectory": "/",
-        "dockerfilePath": "Dockerfile"
+        "type": "image",
+        "image": "ghcr.io/asciimoo/hister@sha256:55ca3b00da9d3245cc689a7f4455be5f4a3931c29d3450d6d1f46f8c931cce35",
+        "autoUpdates": false
       },
       "publicNetworking": {
         "enabled": true,
