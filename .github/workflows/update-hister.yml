@@ -1,7 +1,7 @@
 # ---
 # author: Just Deploy It
 # project: Hister on Railway
-# purpose: Update to the latest stable immutable Hister image only after all pre-push gates pass
+# purpose: Update the direct-image Railway template only after all pre-push gates pass
 # used_by: GitHub Actions scheduler and manual workflow dispatch
 # status: active
 # verified: 2026-08-27
@@ -28,6 +28,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
+      - name: Record the current live template pin
+        id: current
+        run: echo "digest=$(jq -r .digest upstream.json)" >> "$GITHUB_OUTPUT"
+
       - name: Advance every immutable Hister pin
         run: python3 scripts/update_hister.py
 
@@ -53,6 +57,18 @@ jobs:
           image="$(jq -r '"\(.image)@\(.digest)"' upstream.json)"
           grep -Fqx "ARG HISTER_IMAGE=${image}" Dockerfile
           docker build --pull --no-cache --build-arg "HISTER_IMAGE=${image}" --tag hister-railway:update-test .
+
+      - name: Read back the unchanged direct-image Railway template
+        if: steps.changes.outputs.changed == 'false'
+        env:
+          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+        run: python3 scripts/update_hister.py --sync-template --expected-current-digest "${{ steps.current.outputs.digest }}"
+
+      - name: Apply and read back the direct-image Railway template
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+        run: python3 scripts/update_hister.py --sync-template --expected-current-digest "${{ steps.current.outputs.digest }}"
 
       - name: Commit and push only the fully verified candidate
         if: steps.changes.outputs.changed == 'true'
