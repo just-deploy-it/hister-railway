@@ -6,6 +6,7 @@
 # status: active
 # verified: 2026-08-27
 # ---
+import json
 import shutil
 import tempfile
 import unittest
@@ -22,6 +23,17 @@ PINS = (
 
 
 class UpdaterTest(unittest.TestCase):
+    def test_same_pin_is_a_verified_noop(self):
+        source = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ("Dockerfile", "upstream.json", "railway-template.json"):
+                shutil.copy2(source / name, root / name)
+            current = json.loads((root / "upstream.json").read_text())
+            result = apply_update(root, current["version"], current["digest"])
+            self.assertFalse(result["changed"])
+            self.assertEqual(verify(root)["digest"], current["digest"])
+
     def test_two_consecutive_pin_advances_keep_every_file_consistent(self):
         source = Path(__file__).resolve().parents[1]
         with tempfile.TemporaryDirectory() as directory:
